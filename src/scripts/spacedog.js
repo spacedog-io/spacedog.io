@@ -2,13 +2,14 @@
  *  © David Attias 2015
  */
 
-var spaces = {};
-spaces['lvh.me'] = {'protocol':'http', 'host': 'lvh.me:8443'};
-spaces['spacedog.io'] = {'protocol':'https', 'host': 'spacedog.io'};
-spaces['cockpit.spacedog.io'] = {'protocol':'https', 'host': 'spacedog.io'};
+var spaces = {
+	'lvh' : {'protocol':'http', 'host': 'lvh.me:8443'},
+	'spacedog' : {'protocol':'https', 'host': 'spacedog.io'}
+}
 
 function backendUrl(path, backendId) {
-	var space = spaces[location.hostname];
+	var hostname = location.hostname.split('.');
+	var space = spaces[hostname[hostname.length-2]];
 	if (!backendId) backendId = "api";
 	if (!path) path = "";
 	return space.protocol + '://' + backendId + '.' + space.host + path;
