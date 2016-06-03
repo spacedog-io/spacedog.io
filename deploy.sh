@@ -9,4 +9,4 @@ if [ -z "$1" ]
 fi
 
 # sync to bucket
-aws s3 sync ./target s3://spacedog.io/$1 --storage-class REDUCED_REDUNDANCY
+aws s3 sync ./target s3://spacedog.io/$1 --exclude ".*" --exclude "**/.*" --storage-class REDUCED_REDUNDANCY --delete
