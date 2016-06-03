@@ -105,7 +105,8 @@
 			<h5>Reference guide</h5>
 
 			<ul>
-			{% for doc in site.reference-guide %}
+			{% assign docs = site.reference-guide | sort: 'rank' %}
+			{% for doc in docs %}
 			<li>
 			{% if doc.url == page.url %}
 			  <a  class="active"  href="{{doc.url}}"> {{doc.title}} </a>

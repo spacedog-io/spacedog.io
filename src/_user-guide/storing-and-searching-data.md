@@ -6,7 +6,7 @@ rank: 2
 
 #### Data objects
 
-A SpaceDog data object is a typed JSON document. To get some of your backend data objects, send a `GET /v1/data` and don't forget to set the `x-spacedog-backend-key`. You will get the following answer since you did not create any object yet:
+A SpaceDog data object is a typed JSON document. To get some of your backend data objects, send a `GET /1/data`. You will get the following answer since you did not create any object yet:
 
 ```json
 {
@@ -22,8 +22,7 @@ To create objects, you first need to create a schema. Schemas are used to:
 
 - validate data is well formed,
 - define how data is indexed and, evidently, how to search for it,
-- set who can read or write these objects,
-- set which custom functions to trigger when objects are saved or deleted.
+- set who can read or write these objects.
 
 Here is a very simple schema for a car object:
 
@@ -33,15 +32,12 @@ Here is a very simple schema for a car object:
     "_type" : "object",
     "brand" : {
       "_type" : "string",
-      "_required" : true
     },
     "model" : {
       "_type" : "string",
-      "_required" : true
     },
     "color" : {
       "_type" : "enum",
-      "_required" : true
     },
     "description" : {
       "_type" : "text",
@@ -52,9 +48,8 @@ Here is a very simple schema for a car object:
 ```
 
 - `car` is the schema identifier and the name of the object type this schema defines.
-- `_type` is the field or object type. Read the [defining schema](defining-schema.html) page for more details.
-- `_required` is optional and indicates if the field is mandatory.
-- `_language` is useful for `text` fields. It indicates the text language and allow a better full text indexing.
+- `_type` is the field type. Read the [defining schema](defining-schema.html) page for more details.
+- `_language` is useful for `text` fields. It indicates the language and allow a better full text indexing.
 
 The `car` schema defines objects like:
 
@@ -67,14 +62,15 @@ The `car` schema defines objects like:
 }
 ```
 
-To create a schema, `POST /v1/schema/car` with a body set to the `car` JSON schema and an administrator `Authorization` header (see Security section in [Getting started](getting-started.html) page). It will return a status object, either a success:
+To create a schema, `POST /1/schema/car` with a body set to the `car` JSON schema and an admin user `Authorization` header (see Security section in [Getting started](getting-started.html) page). It will return a status object, either a success:
 
 ```json
 {
   "success": true,
+  "status": 200,
   "id": "car",
   "type": "schema",
-  "location": "https://spacedog.io/v1/schema/car"
+  "location": "https://<backendId>.spacedog.io/1/schema/car"
 }
 ```
 
@@ -83,12 +79,10 @@ or a failure:
 ```json
 {
   "success" : false,
+  "status": 401,
   "error" : {
-    "type" : "io.spacedog.services.AuthenticationExcpetion",
-    "message" : "invalid authorization header",
-    "trace" : [
-      "..."
-    ]
+    "type" : "io.spacedog.services.AuthenticationException",
+    "message" : "invalid authorization header"
   }
 }
 ```
@@ -97,15 +91,15 @@ This is generally true for `POST`, `PUT` and `DELETE` requests on the other API 
 
 #### Create a data object
 
-To store a new car, send a `POST /v1/data/car` with a body set to a JSON car. You'll get the new car id from the status object or from the `x-spacedog-object-id` HTTPS response header.
+To store a new car, send a `POST /1/data/car` with a body set to a JSON car. You'll get the new car id from the status object.
 
 #### Fetch a data object
 
-To check the new car is correctly stored, send a `GET /v1/data/car/<<mynewcarid>>` and check the car JSON returned.
+To check that the new car is correctly stored, send a `GET /1/data/car/{id}` and check the car JSON returned.
 
 #### Full text search data objects
 
-Send a `GET /v1/data` to search into all types of objects or `GET /v1/data/car` to search only cars. Add a `q` query param set to `deux chevaux` to full text search this text and you'll get the response:
+Send a `GET /1/search` to search into all types of objects or `GET /1/search/car` to search only cars. Add a `q` query param set to `deux chevaux` to full text search this text and you'll get the response:
 
 ```json
 {
@@ -143,23 +137,23 @@ Non `text` fields are also indexed for search but only the raw value will match 
 
 #### Update or delete a data object
 
-To update the car object, send a `PUT /v1/data/car/{id}?version={current}` where `id` is the car identifier and `current` is the current object version. Add a body set to the updated car JSON. You'll get a regular status response.
+To update the car object, send a `PUT /1/data/car/{id}?version={current}` where `id` is the car identifier and `current` is the current object version. Add a body set to the updated car JSON. You'll get a regular status response.
 
 When updating a data object, the current object version can be used to enforce optimistic consistency check. More than one person or program might update the same object at the same time. This might end up with a data inconsistency. To avoid such problem, all data objects have a system managed version. Every time an object is updated, the provided version is compared to the one in store. Versions are different means that the object has been updated in the meantime by someone else. It results an error for the second to try an update.
 
-To delete the car object, send a `DELETE /v1/data/car/AVBNO3a-QyG1NXhw6uuH` and get a status response. No need to provide a version in this case since a delete will always win over an update.
+To delete the car object, send a `DELETE /1/data/car/{id}` and get a status response. No need to provide a version in this case since a delete will always win over an update.
 
 #### More advanced search
 
-For an advanced search, send a `POST /v1/data/search` or a `POST /v1/data/car/search` with a body set to a query JSON. Since SpaceDog uses ElasticSearch for storing and searching data objects, the query JSON must be compliant with the ElasticSearch query DSL. Please read the [query DSL documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) on the Elastic web site.
+For an advanced search, send a `POST /1/search` or a `POST /1/search/car` with a body set to a query JSON. Since SpaceDog uses ElasticSearch for storing and searching data objects, the query JSON must be compliant with the ElasticSearch query DSL. Please read the [query DSL documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) on the Elastic web site.
 
-For example, this query JSON will full text search for car objects containing `air-cooled` but only when it is a `Citroën`:
+For example, this query JSON will full text search for car objects containing `air-cooled` in there description but only when it is a `Citroën`:
 
 ```json
 {
   "query" : {
-    "filtered" : {
-      "query" : {
+    "bool" : {
+      "must" : {
         "match" : { "description" : "air cooled" }
       },
       "filter" : {
@@ -172,7 +166,7 @@ For example, this query JSON will full text search for car objects containing `a
 
 #### Update or delete a schema
 
-To update the `car` schema, send a `PUT /v1/schema/car` with a body set with the updated JSON schema.
+To update the `car` schema, send a `PUT /1/schema/car` with a body set with the updated JSON schema.
 
 The system will reject all changes that might endanger retro compatibility. It means that all changes that might end up with a failure in old released versions of your app are forbidden. For example, these changes are rejected:
 
@@ -184,7 +178,7 @@ The system will reject all changes that might endanger retro compatibility. It m
 
 When developing a new release of your app, you usually need to make changes in your object schemas. You are only authorized with adding fields or changing validation to less restrictive rules.
 
-To delete the `car` schema, send a `DELETE /v1/schema/car`. It will also delete all the `car` objects.
+To delete the `car` schema, send a `DELETE /1/schema/car`. It will also delete all the `car` objects.
 
 ⋮
 

@@ -1,133 +1,84 @@
 ---
 layout: doc
 title: Files
+rank: 4
 ---
 
-#### Files
+#### /1/file
 
-The file API allows developers and apps to upload files and tgz to the cloud.
-Uploaded files will be available to download to authorized users.
+The file endpoint allows developers and apps to upload/download files to/from the cloud.
+Uploaded files will be available to download to authorized users. Uploaded files are identified by a path and a file name. Examples: `a/b/c/index.html` or `a/b/c/z`.
 
-##### /v1/file/settings
+##### {backendId}.spacedog.io/1/file/{path}
 
-`GET` returns the default file settings.
+Path params | Description
+-------|------------
+path | The path prefix. Can be empty.
+
+`GET` lists all files with the specified path prefix. Example of JSON response:
 
 ```json
 {
-     "default" : {
-          "_cdn" : true,
-          "_purge" : 786765,
-          "_header" : {
-               "ttl" : 5645
-          },
-          "_types" : {
-               "html" : "text/html"
-               "htm" : "text/html"
-               "png" : "image/png"
-          }
-          "_acl" : {
-               "public" : {
-                    "read" : true
-               },
-               "admin" : {
-                    "read" : true, "write" : true
-               }
-          }
-     }
+  "success" : true,
+  "status" : 200,
+  "results" : [
+    {
+      "path" : "/www/a/b/index.html",
+      "size" : 32,
+      "lastModified" : "2016-05-25T11:59:51.000+02:00",
+      "etag" : "876c3c6474fe1654f31edc0d3e841d82"
+    },
+    ...
+  ]
 }
 ```
 
-`PUT` updates the default file settings.
+`DELETE` deletes all the files with this path prefix. Only authorized to administrators. Returns the list of deleted file paths. Example:
 
-
-##### /v1/file
-
-`GET` lists all uploaded files.
-
-It returns this type of JSON object:
+```http
+DELETE /1/file/www HTTP/1.1
+Authorization: Basic ZG9jOmhpIGRvYw==
+```
+returns
 
 ```json
 {
-     "appId" : "…",
-     "fileCount" : 1,
-     "files" : [ {
-          "id" : "...",
-          "name" : "...",
-          "location" : "...",
-          "content-type" : "..."
-     } ]    
+  "success" : true,
+  "status" : 200,
+  "deleted" : [
+    "/www/app.html",
+    "/www/app.js",
+    "/www/images/fifi.jpg",
+    "/www/images/riri.png"
+  ]
 }
 ```
 
-`POST` uploads a file (or an archive) for publication in the cloud.
+##### {backendId}.spacedog.io/1/file/{path}/{filename}
 
-- `name` –– Optional. The name of the file (or archive), used as a description not an identifier.
-- `content-type` –– Optional header defining the type of file. Mandatory if there is no name or no known file extension at the end of the name.
-- `request body`
-     - a file (with a json setings in multipart?),
-     - an archive (a tgz file) containing a tree of files to be published in the cloud. The archive can contain a .settings.json file containing specific settings for this archive.
-- returns a JSON object like this one:
+Path Parameters | Description
+-------|------------
+path | The file path.
+filename | The file name.
 
-```json
-{
-     "success" : true,
-     "id" : "kjnjknkjnjknkjbkjbkjbkjbkjb",
-     "location" : "http://files.mgapps.com/myapp/kjnjknkjnjknkjbkjbkjbkjbkjb/me.png"
-}
-```
+`GET` retuns the specified file. The response body is a byte array.
 
-If the file uploaded is an archive, the returned location is the base location of the archice file tree. To access a specific file of the file tree, append the file relative path to the base location.
+Parameters | Description
+-------|------------
+withContentDisposition | Boolean. Defaults to false. Returns the `Content-Disposition` header to automaticaly save the file to disk upon download.
 
+Returns the following headers:
 
-##### /v1/file/{id}
+Headers | Description
+-------|------------
+Etag | The file MD5 hash.
+X-spacedog-owner | The file owner's username.
+Content-disposition | Optional. The name of use to save the file to disk upon download.
 
-`PUT` updates the specified file or archive.
+`PUT` uploads a file. The request body is the file byte array. Only authorized to administrators.
 
-- `id` –– The file identifier returned by the API when the file was first uploaded. This is not the file name.
+Parameters | Description
+-------|------------
+Content-type | Optional. Header defining the type of file. If this header is not set, the file extension if present is used to derive the content type. Defaults to `application/octect-stream`.
 
-`GET` returns the specified file or archive meta informations.
-
-- `content` = [false]/true –– returns the file content instead of file meta informations.
-
-`DELETE` deletes the specified file or archive.
-
-
-##### /v1/file/{id}/settings
-
-`GET` returns the specified file or archive specific settings.
-
-`PUT` updates the specified file specific settings. Fails if this file is an archive since archive settings must be set in the file .settings.json at the root of the archive tree.
-
-`DELETE` deletes the specified file specific settings. Fails if this file is an archive since archive settings must be set in the file .settings.json at the root of the archive tree.
-
-A file specific settings is equivalent to the default file settings. For archives, you can override settings for specific entries in the archive:
-
-```json
-{
-     "images.ios" : {
-          "_header" : {
-               "_ttl" : 98778
-          }
-     }
-}
-```
-
-
-#### URL
-
-You can use your own domain names to serve uploaded files and file trees. The domain names must first be attached to your app. Read this tutorial to learn how to proceed: http://… Use the following API endpoints to attach your files or file trees to a specific domain and URI.
-
-##### /v1/url/{hostname}/{port}/{uri}
-
-`POST/PUT` attach the specified URL to a file or file tree.
-
-- `fileId` –– The identifier of the file or file tree to be served through this URL.
-
-`DELETE` deletes the specified URL attachement to a file or file tree.
-
-`GET` returns the file identifier attached to the specified URL.
-
-```json
-{
-     "fileId" : "KJHKBFVFDVIYH778TV6RV5CEVK"
-}
+`DELETE` deletes the specified file. Only authorized to administrators.

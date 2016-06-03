@@ -1,44 +1,59 @@
 ---
 layout: doc
 title: Data
+rank: 2
 ---
 
-#### Application data
+#### /1/data
 
-##### /v1/data
+##### {backendId}.spacedog.io/1/data
 
-`GET` searches for data objects of all types in full text mode.
+`GET` returns all the specified backend data objects of all types.
 
-- `text` The text to full text search.
-- `fetch` One or more field names of type `ref` to automatically fetch. Use the keyword `all` to automatically fetch all referenced objects. This behavior is only available at the first level of the object graph.
+Parameters | Description
+----|----
+refresh | Boolean. Defaults to false. If true, forces index refresh to make sure the latests created objects are there.
+from | Integer. Defaults to 0. Row of the first object to return.
+size | Integer. Defaults to 10. Maximum Number of objects to return.
 
-##### /v1/data/{type}
+`DELETE` deletes all the specified backend data objects of all types.
 
-`GET` searches for data objects of the specified type.
+Parameters | Description
+----|----
+refresh | Boolean. Defaults to false. If true, forces index refresh to make sure the latests created objects are deleted.
 
-- `text` The text to full text search.
-- `fetch` One or more field names of type `ref` to automatically fetch. Use the keyword `all` to automatically fetch all referenced objects. This behavior is only available at the first level of the object graph.
+##### {backendId}.spacedog.io/v1/data/{type}
 
-`POST` creates a new data object of this type.
+`GET` returns all the specified backend data objects of the specified type.
 
-`DELETE` deletes this type and all data objects of this type.
+Parameters | Description
+----|----
+refresh | Boolean. Defaults to false. If true, forces index refresh to make sure the latests created objects are there.
+from | Integer. Defaults to 0. Row of the first object to return.
+size | Integer. Defaults to 10. Maximum Number of objects to return.
 
+`DELETE` deletes all the specified backend data objects of the specified type.
 
-##### /v1/data/{type}/{id}
+Parameters | Description
+----|----
+refresh | Boolean. Defaults to false. If true, forces index refresh to make sure the latests created objects are deleted.
 
-`GET` returns the specified data object.
+`POST` creates an new object of the specified type into the specified backend.
 
-`PUT` updates the specified data object.
+Parameters | Description
+----|----
+id | String. Optional. If set, forces SpaceDog to assign the specified `id` to the specified object unless the schema says otherwise with the `_id` directive. Otherwise SpaceDog assigns a generated id to this object.
+body | String. Required. The JSON repredentation of the data object. Must comply to the type schema.
 
-- `body` The data JSON object of this type
+##### {backendId}.spacedog.io/1/data/{type}/{id}
 
-`DELETE` deletes the specified data object.
+`GET` returns the data object of the specified type and id.
 
+`DELETE` deletes the data object of the specified type and id.
 
-##### /v1/data/search
-##### /v1/data/{type}/search
+`PUT` updates the data object of the specified type and id.
 
-`POST` searches for data objects of the specified type if provided.
-
-- `body` An ElasticSearch JSON query.
-
+Parameters | Description
+----|----
+strict | Boolean. Default to false. If true, stricly updates the whole object with the specified body. If false, updates only the fields present in the specified body.
+version | Long. Optional. The previous version of the data object to update. Used for optimistic locking. If the server side version of this object differs from the one specified, returns http status code `409 Conflict`, meaning, your data might be obsolete.

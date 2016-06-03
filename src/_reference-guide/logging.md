@@ -1,113 +1,47 @@
 ---
 layout: doc
 title: Logging
+rank: 6
 ---
 
-#### Application and backend logging
+#### /1/log
 
-Use the log API endpoints to monitor your backend. We log:
+Use the log endpoint to monitor your backend. SpaceDog logs all service requests sent to your backend.
 
-- all the requests to the API,
-- all job runs,
-- all queue messages processing.
+##### {id}.spacedog.io/1/log
 
-Example of log JSON object:
+`GET` returns the last 10 requests logged. Only authorized to administrators.
 
-```json
-{
-	"id" : "AZERTY123456789",
-	"type" : "api-request",
-	"started" : "2016-03-12T12:23:34.675Z",
-	"terminated" : "2016-03-12T12:23:35.123Z",
-	"took" : 13413,
-	"sucess" : true,
-	"api-request" : {
-		"..." : "..."
-	}
-}
-```
+- `logType` –– Optional. Valid values are [KEY, USER, OPERATOR, ADMIN, SUPER_ADMIN, SUPERDOG]. Returns logs with the specified credentials level or lower.
+- `minStatus` –– Returns logs with the specified http response status code or higher. 
+- `from` –– Defaults to 0. The index of the first log to return from the latest to the oldest.
+- `size` –– Defaults to 10. Number to logs to return. Maximum is 1000.
 
-An API request log contains:
+Response body example:
 
 ```json
 {
-	"api-request" : {
-		"method" : "GET",
-		"uri" : "/v1/user/ptidenis",
-		"headers" : [],
-		"params" : [],
-		"status" : 200
-	}
+  "took" : 78,
+  "total" : 752,
+  "results" : [
+    {
+      "method" : "GET",
+      "path" : "/1/data/message",
+      "receivedAt" : "2016-05-26T22:19:38.722+02:00",
+      "processedIn" : 28,
+      "credentials" : {
+        "backendId" : "test",
+        "name" : "vince",
+        "type" : "USER"
+      },
+      "status" : 200,
+      "response" : {
+        "took" : 11,
+        "total" : 0,
+        "results" : [ ]
+      }
+    },
+    ...
+  ]
 }
 ```
-
-A custom service request log contains:
-
-```json
-{
-	"service-call" : {
-		"id" : "myService",
-		"body" : {
-			"..." : "..."
-		},
-	}
-}
-```
-
-A job run contains:
-
-```json
-{
-	"job-run" : {
-		"jobId" : "mySuperJob",
-		"serviceId" : "mySuperService",
-		"triggeringPattern" : "monday:22:34",
-		"params" : {
-			"..." : "..."
-		}
-	}
-}
-```
-
-A queue message processing log contains:
-
-```json
-{
-	"message-processed" : {
-		"queueId" : "mySuperQueue",
-		"messageId" : "131213251318",
-		"message" : {
-			"..." : "..."
-		}
-	}
-}
-```
-
-In case of error, the log contains:
-
-```json
-{
-	"..." : "...",
-	"sucess" : false,
-	"error" : {
-		"..." : "..."
-	}
-}
-```
-
-
-##### /v1/log
-
-`GET` returns the last 100 logs.
-
-- `before` –– Optional timestamp. Returns logs older than this timestamp. 
-- `after` –– Optional timestamp. Returns logs younger than this timestamp. 
-- `first` = 1 to œ –– The first log to return from the latest to the oldest.
-- `size` = 1 to 1000 –– number to logs to return. Default is 100. Maximum is 1000.
-
-
-`POST` upload client defined logs.
-
-- request body –– An array of log objects. Client can define specific log types. The value of the type field must be used as the key of log specific data part.
-- returns a created status object.
-

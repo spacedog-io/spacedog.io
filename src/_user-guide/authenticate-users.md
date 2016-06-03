@@ -6,29 +6,28 @@ rank: 4
 
 #### Create a new user
 
-If your application has a sign up form to allow users to create an account, your app can create users by sending `POST /v1/user` with a user sign up JSON:
+If your application has a sign up form to allow users to create an account, your app can create users by sending `POST /1/user` with a user sign up JSON:
 
 ```json
 {
-	"username" : "zabou",
-	"password" : "hi zabou",
-	"email" : "zabou@dog.io"
+	"username" : "bob",
+	"password" : "*****",
+	"email" : "bob@dog.com"
 }
 ```
 
-Once a user is created, you can authenticate his backend requests with an `Authorization` header with a `Basic` scheme using his username and password base 64 encoded. Even if requests are authenticated this way, you need to provide the backend key header.
+Once a user is created, you can authenticate requests with an `Authorization` header using `Basic` scheme and providing the user username and password, BASE64 encoded.
 
 Example:
 
 ```http
-GET /v1/data/
-X-spacedog-backend-key: getmepizza:default:d738739b-f130-49d0-9d01-ba84b4910ddb
-Authorization Basic ZG9jOmhpIGRvYw==
+GET /1/data HTTP/1.1
+Authorization: Basic ZG9jOmhpIGRvYw==
 ```
 
-#### Login a user
+#### Log in a user
 
-To login a user, send a `GET /v1/login` with the backend key header and the `Authorization` header. Login is not mandatory since, all requests are authenticated the same way. It is a convenient method to check whether the user credentials are valid or not before going further.
+To log in a user, send a `GET /1/login` with an `Authorization` header using `Basic` scheme. Log in is not mandatory since, all requests are authenticated the same way. It is a convenient method to check whether the user credentials are valid or not before going further.
 
 ⋮
 

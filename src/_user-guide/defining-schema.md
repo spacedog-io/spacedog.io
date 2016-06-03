@@ -6,24 +6,23 @@ rank: 3
 
 #### Schema field types
 
-Data object fields are defined and typed in schemas. Find below all the permitted field types.
+Data object fields are defined in schemas. Find below all the permitted field types.
 
-`string`
+##### String
 
 ```json
 {
   "car" : {
     "brand" : {
-      "_type" : "string",
-      "_required" : true
+      "_type" : "string"
     }
   }
 }
 ```
 
-`string` fields are suitable for all string data that do not contain real text that should be analyzed for latter full text search. Names, identifiers, codes, zip codes are good examples. `string` fields are better search with equal type queries.
+`string` fields are suitable for all string data that do not contain real text that should be analyzed for latter full text search. Names, identifiers, codes, zip codes, urls, path are good examples. `string` fields are better search with equal type queries.
 
-`text`
+##### Text
 
 ```json
 {
@@ -40,7 +39,7 @@ Data object fields are defined and typed in schemas. Find below all the permitte
 
 `_language` contains the language setting for better text analysis. Defaults to `english`. Here is a list of available [languages](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-lang-analyzer.html).
 
-`boolean`
+##### Boolean
 
 ```json
 {
@@ -52,7 +51,7 @@ Data object fields are defined and typed in schemas. Find below all the permitte
 }
 ```
 
-`integer`, `long`, `float` and `double`
+##### Integer, long, float and double
 
 ```json
 {
@@ -83,7 +82,7 @@ Car example:
 }
 ```
 
-`object`
+##### Object
 
 ```json
 {
@@ -92,7 +91,6 @@ Car example:
       "_type" : "object",
       "paid" : {
         "_type" : "float",
-        "_required" : true
     }
   }
 }
@@ -109,7 +107,7 @@ Car example:
 }
 ```
 
-`date`, `time` and `timestamp`
+##### Date, time and timestamp
 
 ```json
 {
@@ -117,30 +115,28 @@ Car example:
     "..." : "...",
     "firstRegistration" : {
       "_type" : "date",
-      "_required" : true
     },
     "avgMorningDepartureTime" : {
       "_type" : "time",
-      "_required" : true
     },
     "lastToll" : {
       "_type" : "object",
       "paid" : {
         "_type" : "float",
-        "_required" : true
       },
       "when" : {
         "_type" : "timestamp",
-        "_required" : true
       },
     }
   }
 }
 ```
 
-- `date` are year, month and day formatted strings. Exact format is `yyyy-MM-dd`.
-- `time` are hours, minutes and seconds formatted strings. Exact format is `HH:mm:ss.SSS`. The milliseconds part is optional.
-- `timestamp` are ISO 8601 strings with format like `yyyy-MM-ddTHH:mm:ss.SSSZ`.
+`date` are year, month and day formatted strings. Exact format is `yyyy-MM-dd`.
+
+`time` are hours, minutes and seconds formatted strings. Exact format is `HH:mm:ss.SSS`. The milliseconds part is optional.
+
+`timestamp` are ISO 8601 strings with format like `yyyy-MM-ddTHH:mm:ss.SSSZ`.
 
 Car Example:
 
@@ -156,15 +152,13 @@ Car Example:
 }
 ```
 
-`geopoint`
+##### Geopoint
 
 ```json
 {
   "car" : {
-    "..." : "...",
     "location" : {
-      "_type" : "geopoint",
-      "_required" : true
+      "_type" : "geopoint"
     }
   }
 }
@@ -185,19 +179,20 @@ Example of car object with a location field:
 
 A `geopoint` field represent a precise (1 meter) point on planet earth. They are automatically geo hashed and indexed for geographical search.
 
-`enum`
+##### Enum
 
 ```json
 {
   "car" : {
     "color" : {
       "_type" : "enum",
-      "_required" : true,
       "_values" : ["electric-blue", "burgundy-red", "silver-metal", "tropical-green"]
     }
   }
 }
 ```
+
+[Not yet implemented] The directive `_values` is not yet implemented.
 
 Car example:
 
@@ -208,7 +203,7 @@ Car example:
 }
 ```
 
-`stash`
+##### Stash
 
 ```json
 {
@@ -238,15 +233,14 @@ Car example:
 }
 ```
 
-`ref` [Not yet implemented]
+##### Reference [Not yet implemented]
 
 ```json
 {
   "car" : {
     "owner" : {
       "_type" : "ref",
-      "_refType" : "user",
-      "_required" : true
+      "_refType" : "user"
     }
   }
 }
@@ -263,7 +257,7 @@ Car example:
 }
 ```
 
-To fetch a car object but also its owner referenced user object, send a `GET /v1/data/car/76867kjvkgcjg8764jhgkhc` request with the `fetch` param set to `owner`. You get the following response:
+To fetch a car object but also its owner referenced user object, send a `GET /1/data/car/76867kjvkgcjg8764jhgkhc` request with the `fetch` param set to `owner`. You get the following response:
 
 ```json
 {
@@ -279,15 +273,14 @@ To fetch a car object but also its owner referenced user object, send a `GET /v1
 
 The `fetch` param accepts a comma separated list of field names and the `all` keyword. It only fetches referenced fields from the root object of the graph.
 
-`file` [Not yet implemented]
+##### File [Not yet implemented]
 
 ```json
 {
   "car" : {
     "userManual" : {
       "_type" : "file",
-      "_contentTypes" : ["application/pdf"],
-      "_required" : true
+      "_contentTypes" : ["application/pdf"]
     }
   }
 }
@@ -304,7 +297,7 @@ Car example:
 }
 ```
 
-`amount` [Not yet implemented]
+##### Amount [Not yet implemented]
 
 ```json
 {
@@ -373,7 +366,7 @@ This schema means that:
 
 Any user, api key and group can be listed in the access control list to set specific permissions. 
 
-When a user is fetching or updating a specific data object for wich he does not have permission, he gets back an `NOT AUTHORIZED` response. When a user sends a search query, objects he does not have read permission will be automaticaly excluded from the response.
+When a user is fetching or updating a specific data object for wich he does not have permission, he gets back an `FORBIDDEN` response. When a user sends a search query, objects he does not have read permission will be automaticaly excluded from the response.
 
 ⋮
 

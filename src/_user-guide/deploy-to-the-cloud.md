@@ -4,138 +4,59 @@ title: Deploy to the cloud
 rank: 5
 ---
 
-#### The file endpoint [Not yet implemented]
+#### Publish files to the cloud
 
-Use the `/v1/file` endpoint to upload and publish files and file sets to the cloud.
+Use the `/1/file` endpoint to upload and publish files to the cloud.
 
 Why would you do that?
 
-- to publish and manage static resources (images, html files, css files, js files, ...)
+- to publish a static web site,
+- to publish static resources (images, html files, css files, js files, ...)
 - to publish a JavaScript app and all its resources,
-- to upload and store user files,
-- to store app generated reports and files,
 - ...
 
-#### Publish a tgz file [Not yet implemented]
-
-First create tgz archive, call it `myapp.tgz`:
-
-```
-/
-|---- .settings.json
-|---- index.html
-|---- main.css
-|---- main.js
-|---- /images
-|     |
-|     |---- logo.png
-|     |---- ...
-|---- ...
-```
-
-Then send a `PUT v1/file/getmepizza` where `getmepizza` is file tree identifier and with the tgz archive as multi part body and a `Content-type` header set to `???/???`. It returns a classic status JSON:
-
-```json
-{
-  "success" : true,
-  "id" : "getmepizza",
-  "type" : "filetree",
-  "location" : "https://static.spacedog.io/{backend-id}/getmepizza"
-}
-```
-
-The returned location is the base location of the archive file tree. To access a specific file of the file tree, append the file relative path to the base location:
+To upload and publish files, send `PUT /1/file` requests for all files. Each file must have a path and a file name. The path can not be empty. Example:
 
 ```http
-https://static.spacedog.io/{backend-id}/getmepizza/index.png
-https://static.spacedog.io/{backend-id}/getmepizza/images/logo.png
+PUT /1/file/www/images/pizza.png HTTP/1.1
+Host: getmepizza.spacedog.io
+Authorization: Basic ZG9jOmhpIGRvYw==
+...
 ```
-
-#### Add a settings to your tgz file [Not yet implemented]
-
-To change the way uploaded file sets are served, add a `.settings.json` file at the root of the tgz archive. Example:
-
-```json
-{
-     "_default" : {
-          "_cdn" : true,
-          "_purge" : 786765,
-          "_headers" : {
-               "ttl" : 5645
-          },
-          "_types" : {
-               "js" : "application/js",
-               "png" : "image/png"
-          },
-          "_acl" : {
-               "public" : {
-                    "read" : true
-               },
-               "admin" : {
-                    "read" : true, "write" : true
-               }
-          }
-     },
-     "images" : {
-          "_headers" : {
-               "ttl" : 98778
-          }
-     }
-}
-```
-
-- `_default` contains the default file settings for this archive.
-- `_cdn` if true, files are accessed through a CDN for better performance. Default to false.
-- `_purge` is the duration in milliseconds before this archive is purged since upload. O means no purge. Default is 0.
-- `_headers` is the list of headers to set when serving this archive files.
-- `_types` maps file extensions to content types. This allow the `Content-type` header to be automatically set when serving this archive files.
-- `_acl` contains access control settings. Equivalent to data objects access control settings in schema.
-- `images` contains the specific file settings for the `images` file tree. Do the same for all archive file or file tree that need specific settings. Specific and default settings are merged with specific overriding default fields.
-
-
-#### Default file settings [Not yet implemented]
-
-The system provides a default file settings JSON. When serving files, the system merges default and specific settings (if any) an archive might provided. The specific settings have precedence.
-
-To get the default file settings, send a `GET /v1/file/settings` request. To update it, send a `PUT /v1/file/settings` request with a body set to the updated settings JSON.
-
-
-#### Publish a single file [Not yet implemented]
-
-To upload and publish a single file, send a `POST /v1/file` with
-
-- a file as multi part body,
-- an optional `filename` query param,
-- an optional `Content-type` header with the right value Mandatory if there is no filename or no known file extension at the end of the filename.
-
-Filenames are not use to uniquely identify uploaded files. A unique generated identifier is attached to all uploaded files or archives. Use filenames to help humans debug or manage since filenames are visible in file locations.
-
-It should return:
+returns
 
 ```json
 {
   "success" : true,
-  "id" : "hjgfv1178678658khguf-{filename}",
-  "type" : "file",
-  "location" : "https://static.spacedog.io/{backend-id}/hjgfv1178678658khguf-{filename}"
+  "status" : 200,
+  "path" : "/www/images/pizza.png",
+  "location" : "https://getmepizza.spacedog.io/1/file/www/images/pizza.png",
+  "s3" : "https://spacedog-files.s3.amazonaws.com/getmepizza/www/images/pizza.png"
 }
-
 ```
 
-#### Attach a specific URL to a file or file tree [Not yet implemented]
+The content type is usually derived from the file name extension. If none, provide a `Content-Type` header with the right value.
 
-You can use your own domain names to serve uploaded files and file trees. The domain names must first be attached to your account with help of the SpaceDog administration console.
+#### Attach a domain name to your cloud resources
 
-Then to attach your file or file tree to a specific domain and URI, send a `PUT /v1/url/{hostname}/{port}/{uri}` request with a `fileId` query param set the the uploaded file/archive identifier. `port` and `uri` can be empty. It returns the following JSON:
+You can use your own domain names to serve your files and create a real web site. Contact us by email to help us do so.
+
+#### Share a file
+
+Use the `/1/share` endpoint when the system or a user need to share a single file with others.
+
+Example: send a `PUT` request to https://getmepizza.spacedog.io/1/share/your-invoice.pdf. The request body if the file byte array. It returns the JSON response:
 
 ```json
 {
-     "success" : true,
-     "id" : "lkjhhg98776jkhkgvhgcftyc9078T",
-     "location" : "https://{hostname}:{port}/{uri}"
+  "success" : true,
+  "status" : 200,
+  "path" : "/3795c4ad-d6b6-48f9-9276-6e3659805b4f/your-invoice.pdf",
+  "location" : "https://getmepizza.spacedog.io/1/share/3795c4ad-d6b6-48f9-9276-6e3659805b4f/your-invoice.pdf",
+  "s3" : "https://spacedog-shared.s3.amazonaws.com/getmepizza/3795c4ad-d6b6-48f9-9276-6e3659805b4f/your-invoice.pdf"
 }
 ```
 
-⋮
+Share the location or s3 urls you find in the response to the people you like.
 
-Next: [Configurations and contents](configurations-and-contents.html) ⋙
+File names can not use to uniquely identify shared files. The identifier is the path you find in the response.
