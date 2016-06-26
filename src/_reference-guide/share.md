@@ -21,7 +21,7 @@ The share endpoint provides a way to share files with other users.
 Parameters | Description
 -------|------------
 filename | The file name. Used to derive the share identifier and the content type. Also used to provide a name when downloading the file from a web browser.
-Content-type | Optional. Header defining the type of file. If this header is not set, the file name extension if present is used to derive the content type. Defaults to `application/octect-stream`.
+Content-type | Optional. Header defining the type of file. If this header is not set, the file name extension if present is used to derive the content type. Defaults to `application/octet-stream`.
 body | The file byte array.
 
 ##### {backendId}.spacedog.io/1/share/{id}/{filename}
