@@ -79,6 +79,6 @@ Content-disposition | Optional. The name of use to save the file to disk upon do
 
 Parameters | Description
 -------|------------
-Content-type | Optional. Header defining the type of file. If this header is not set, the file extension if present is used to derive the content type. Defaults to `application/octect-stream`.
+Content-type | Optional. Header defining the type of file. If this header is not set, the file extension if present is used to derive the content type. Defaults to `application/octet-stream`.
 
 `DELETE` deletes the specified file. Only authorized to administrators.
