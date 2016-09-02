@@ -28,14 +28,14 @@ Use this endpoint to manage your mobile app installations on user devices and to
 }
 ```
 
-Field | Description
-------|------------
-token | The token provided by the device to push notifications to this app.
-appId | The id of the app to push to.
-pushService | The push service to use to push to this device. Valid values are APNS, APNS_SANDBOX, ADM, GCM, BAIDU, WNS.
-tags  | An array of tags used to select the installations to push to.
-tags.key | the tag's key
-tags.value | the tag's value
+| Field       | Description                              |
+| ----------- | ---------------------------------------- |
+| token       | The token provided by the device to push notifications to this app. |
+| appId       | The id of the app to push to.            |
+| pushService | The push service to use to push to this device. Valid values are APNS, APNS_SANDBOX, ADM, GCM, BAIDU, WNS. |
+| tags        | An array of tags used to select the installations to push to. |
+| tags.key    | the tag's key                            |
+| tags.value  | the tag's value                          |
 
 If an installation is posted with credentials of a valid user, the new installation is associated with this user. Otherwise the new installation is not associated with any user.
 
@@ -98,12 +98,24 @@ If an installation is posted with credentials of a valid user, the new installat
 }
 ```
 
-Field | Description
-------|------------
-appId | The id of the app to push to.
-pushService | Optional. The service to push to. If none specified, pushes to all services.
-usersOnly | Optional. Defaults to false. If true, pushes only to installations associated with a backend user.
-tags  | Optional. Pushes only to installations with these tags. If none specified, pushes to all installations
+| Field       | Description                              |
+| ----------- | ---------------------------------------- |
+| appId       | The id of the app to push to.            |
+| message     | A simple string or a JSON formatted message data. Take a look at the exemple below or the [AWS documentation](http://docs.aws.amazon.com/sns/latest/dg/mobile-push-send-custommessage.html). |
+| pushService | Optional. The service to push to. If none specified, pushes to all services. |
+| usersOnly   | Optional. Defaults to false. If true, pushes only to installations associated with a backend user. |
+| tags        | Optional. Pushes only to installations with these tags. If none specified, pushes to all installations |
+
+Example of JSON formatted message data :
+
+```json
+{
+	"default": "This is the default message which must be present when publishing a message to a topic. The default message will only be used if a message is not present for one of the notification platforms.",
+	"APNS": "{\"aps\":{\"alert\": \"Check out these awesome deals!\",\"url\":\"www.amazon.com\"} }",
+	"GCM":"{\"data\":{\"message\":\"Check out these awesome deals!\",\"url\":\"www.amazon.com\"}}",
+	"ADM": "{ \"data\": { \"message\": \"Check out these awesome deals!\",\"url\":\"www.amazon.com\" }}" 
+}
+```
 
 It returns a list of installations pushed to. Example:
 
