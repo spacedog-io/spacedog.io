@@ -16,21 +16,17 @@ Use a batch request when you need to send to your backend a batch of requests. I
 [
      {
           "method" : "GET",
-          "path" : "/1/data/product/AVTkKLKsuJhkJMV-I3kz",
+          "path" : "/1/data/product",
+          "parameters": {
+               "size": 20
+          }
      },
      {
           "method" : "POST",
           "path" : "/1/data/product",
-          "body" : {
+          "content" : {
                "name" : "Teddy Bear",
-               "price" : "$23.45"
-          }
-     },
-     {
-          "POST" : "/v1/data/product",
-          "body" : {
-               "name" : "Mobby Dick",
-               "price" : "$29.99"
+               "price" : 23.45
           }
      },
      {
@@ -45,39 +41,42 @@ And it returns an array of response JSON objects. Example:
 ```json
 [
      {
-          "name" : "Thunder Buzz",
-          "price" : "$13.45",
-          "meta": {
-               "createdBy": "fred",
-               "updatedBy": "fred",
-               "createdAt": "2016-05-24T19:05:53.068Z",
-               "updatedAt": "2016-05-26T09:08:13.411Z",
-               "id": "AVTkKLKsuJhkJMV-I3kz",
-               "type": "product",
-               "version": 4
-          },
+          "total" : 0,
+          "results" : [
+          ]
      },
      {
           "success" : true,
           "status" : 200,
-          "id" : "HJTkKLKsuJhkJMVoUIh6g",
+          "id": "HJTkKLKsuJhkJMVoUIh6g",
+          "type": "product",
           "location" : "https://mybackend.spacedog.io/1/data/product/HJTkKLKsuJhkJMVoUIh6g"
-     },
-     {
-          "success" : true,
-          "status" : 200,
-          "id" : "lYJTkKLKsuJhkJMVoUIh9T",
-          "location" : "https://mybackend.spacedog.io/1/data/product/lYJTkKLKsuJhkJMVoUIh9T"
      },
      {
           "success" : false,
           "status" : 404,
           "error" : {
-               "type" : "io.spacedog.services.NotFoundException",
-               "message" : "object [GVTkGHKsuJhkJMV-i2ke] of type [product] not found",
+               "message" : "data object [product][GVTkGHKsuJhkJMV-i2ke] not found",
           }
      }
 ]
 ```
 
 - `stopOnError` –– Boolean. Defaults to false. If true, stops the batch processing when one request returns an http error (40X or 50X).
+
+To pass specific parameters and headers to the batch requests, add a `parameters` and a `headers` sections in the request JSON object. Header values must be strings. Example:
+
+```json
+[
+     {
+          "method" : "GET",
+          "path" : "/1/data/product",
+          "parameters": {
+               "size": 20
+          },
+          "headers": {
+               "x-spacedog-debug": "true"
+          }
+     }
+]
+```
