@@ -20,7 +20,7 @@ github_username:  davattias
 
 # Build settings
 markdown: redcarpet
-highlighter: pygments
+highlighter: rouge
 
 kramdown:
   input: GFM
