@@ -18,8 +18,6 @@ rank: 3
 `POST` returns data objects of all types found by the specified query. The body must contain an ElasticSearch JSON query compliant with this [query DSL](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html).
 
 - `refresh` Boolean. Defaults to false. If true, forces index refresh to make sure the latests created objects are there.
-- `from` Integer. Defaults to 0. Row of the first object to return.
-- `size` Integer. Defaults to 10. Maximum Number of objects to return.
 
 `DELETE` deletes data objects of all types found by the specified query. The body must contain an ElasticSearch JSON query compliant with this [query DSL](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html).
 

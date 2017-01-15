@@ -22,7 +22,7 @@ rank: 2
 | ---------- | ---------------------------------------- |
 | refresh    | Boolean. Defaults to false. If true, forces index refresh to make sure the latests created objects are deleted. |
 
-##### {backendId}.spacedog.io/v1/data/{type}
+##### {backendId}.spacedog.io/1/data/{type}
 
 `GET` returns all the specified backend data objects of the specified type.
 
