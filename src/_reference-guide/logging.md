@@ -10,10 +10,8 @@ Use the log endpoint to monitor your backend. SpaceDog logs all service requests
 
 ##### {id}.spacedog.io/1/log
 
-`GET` returns the last 10 requests logged. Only authorized to administrators.
+*GET* returns the last requests logged. Only authorized to administrators.
 
-- `logType` –– Optional. Valid values are [KEY, USER, OPERATOR, ADMIN, SUPER_ADMIN, SUPERDOG]. Returns logs with the specified credentials level or lower.
-- `minStatus` –– Returns logs with the specified http response status code or higher. 
 - `from` –– Defaults to 0. The index of the first log to return from the latest to the oldest.
 - `size` –– Defaults to 10. Number to logs to return. Maximum is 1000.
 
@@ -45,3 +43,22 @@ Response body example:
   ]
 }
 ```
+
+##### {id}.spacedog.io/1/log/search
+
+*POST* search for logged requests. Only authorized to administrators.
+
+- `from` –– Defaults to 0. The index of the first log to return from the latest to the oldest.
+- `size` –– Defaults to 10. Number to logs to return. Maximum is 1000.
+
+The request body is the inner part of an Elasticsearch type query. Example:
+
+```json
+{
+  "term" : {
+      "path" : "/1/data/message"
+  }
+}
+```
+
+The query is automatically sorted from the latest to the oldest logs.
