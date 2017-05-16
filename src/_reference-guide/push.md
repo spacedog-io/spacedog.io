@@ -4,17 +4,42 @@ title: Push
 rank: 11
 ---
 
+#### /1/applications
+
+Use this endpoint to manage your applications and their push credentials.
+
+##### /1/applications/{name}/{pushService}
+
+*PUT* sets the credentials of the specified `name` application with the specified push service. Available push services are APNS, APNS_SANDBOX and GCM. The request body must contain principal and credentials specific to the specified push service.
+
+Example for APNS:
+
+```http
+PUT https://caremen.spacedog.io/1/applications/driver/APNS
+```
+
+with body:
+
+```json
+{
+  "principal" : "-----BEGIN CERTIFICATE-----\nMIIGVzC...JkjhGHGF\n-----END CERTIFICATE-----",
+  "credentials" : "-----BEGIN PRIVATE KEY-----\nMIIEvAIBA...VIqy6fJA==\n-----END PRIVATE KEY-----"
+}
+```
+
+sets the APNS push credentials of an application named `caremen-driver`.
+
 #### /1/installation
 
 Use this endpoint to manage your mobile app installations on user devices and to push mobile notifications to them.
 
-##### {backendId}.spacedog.io/1/installation
+##### /1/installation
 
-`GET` returns all the specified backend installations. Only authorized to administrators.
+*GET* returns all the specified backend installations. Only authorized to administrators.
 
-`DELETE` deletes all the specified backend installations. Only authorized to administrators.
+*DELETE* deletes all the specified backend installations. Only authorized to administrators.
 
-`POST` creates a new installation. Request body example:
+*POST* creates a new installation. Request body example:
 
 ```json
 {
@@ -39,19 +64,19 @@ Use this endpoint to manage your mobile app installations on user devices and to
 
 If an installation is posted with credentials of a valid user, the new installation is associated with this user. Otherwise the new installation is not associated with any user.
 
-##### {backendId}.spacedog.io/1/installation/{id}
+##### /1/installation/{id}
 
-`GET` returns the specified installation.
+*GET* returns the specified installation.
 
-`PUT` updates the specified installation.
+*PUT* updates the specified installation.
 
-`DELETE` deletes the specified installation. Only authorized to administrators or the owner of this object.
+*DELETE* deletes the specified installation. Only authorized to administrators or the owner of this object.
 
-##### {backendId}.spacedog.io/1/installation/{id}/tags
+##### /1/installation/{id}/tags
 
-`GET` returns the tags of the specified installation.
+*GET* returns the tags of the specified installation.
 
-`DELETE` deletes the tags specified in the body from the tags of the specified installation. Request body example:
+*DELETE* deletes the tags specified in the body from the tags of the specified installation. Request body example:
 
 ```json
 [
@@ -60,7 +85,7 @@ If an installation is posted with credentials of a valid user, the new installat
 ]
 ```
 
-`POST` adds a tag to the tags of the specified installation. Request body example:
+*POST* adds a tag to the tags of the specified installation. Request body example:
 
 ```json
 {
@@ -69,7 +94,7 @@ If an installation is posted with credentials of a valid user, the new installat
 }
 ```
 
-`PUT` replaces all the tags of the specified installation with the tags specified in the body. Request body example:
+*PUT* replaces all the tags of the specified installation with the tags specified in the body. Request body example:
 
 
 ```json
@@ -79,9 +104,9 @@ If an installation is posted with credentials of a valid user, the new installat
 ]
 ```
 
-##### {backendId}.spacedog.io/1/installation/push
+##### /1/installation/push
 
-`POST` pushes a notification to all installations of the specified app. Only authorized to users and administrators. Request body example:
+*POST* pushes a notification to all installations of the specified app. Only authorized to users and administrators. Request body example:
 
 ```json
 {
