@@ -10,19 +10,19 @@ Users must have credentials to access a backend, its data and services. Users ha
 
 A credentials object has the following public fields:
 
-| Fields          | Description                      |
-| --------------- | -------------------------------- |
-| backendId   | String. Required. The backend of this credentials. |
-| username    | String. Required. The username of this credentials used to login. |
-| email       | String. Required. The credentials user email. |
-| enabled     | Boolean. Default to true. If false, credentials can no longer be used to access any resource of the backend. |
-| enableAfter   | Timestamp. Optional. The timestamp after which this credentials is enabled. |
-| disableAfter   | Timestamp. Optional. The timestamp after which this credentials is disabled. |
-| roles   | String list. Defaults to `[user]`. The credentials list of roles. Credentials access to backend services depends on the its roles. |
-| invalidChallenges   | Integer. Defaults to 0. The credentials count of invalid password challenges. The sytem counts invalid challenges only if enabled with credentials settings `maximumInvalidChallenges`. |
-| lastInvalidChallengeAt   | Timestamp. Optional. The timestamp of the last invalid password challenge. The sytem counts invalid challenges only if enabled with credentials settings `maximumInvalidChallenges`. |
-| createdAt   | Timestamp. Read only. The credentials creation timestamp. |
-| updatedAt   | Timestamp. Read only. The credentials las update timestamp. |
+| Fields                 | Description                              |
+| ---------------------- | ---------------------------------------- |
+| backendId              | String. Required. The backend of this credentials. |
+| username               | String. Required. The username of this credentials used to login. |
+| email                  | String. Required. The credentials user email. |
+| enabled                | Boolean. Default to true. If false, credentials can no longer be used to access any resource of the backend. |
+| enableAfter            | Timestamp. Optional. The timestamp after which this credentials is enabled. |
+| disableAfter           | Timestamp. Optional. The timestamp after which this credentials is disabled. |
+| roles                  | String list. Defaults to `[user]`. The credentials list of roles. Credentials access to backend services depends on the its roles. |
+| invalidChallenges      | Integer. Defaults to 0. The credentials count of invalid password challenges. The sytem counts invalid challenges only if enabled with credentials settings `maximumInvalidChallenges`. |
+| lastInvalidChallengeAt | Timestamp. Optional. The timestamp of the last invalid password challenge. The sytem counts invalid challenges only if enabled with credentials settings `maximumInvalidChallenges`. |
+| createdAt              | Timestamp. Read only. The credentials creation timestamp. |
+| updatedAt              | Timestamp. Read only. The credentials las update timestamp. |
 
 
 ##### /1/login
@@ -85,19 +85,19 @@ Default credentials settings:
 }
 ```
 
-| Property                 | Description                              |
-| ------------------------ | ---------------------------------------- |
-| disableGuestSignUp       | Boolean. Default to false. Wether guests are allowed to create credentials |
-| usernameRegex            | String. Defaults to "[a-zA-Z0-9_%@+\\-\\.]{3,}". The regular expression validating usernames. |
-| passwordRegex            | String. Defaults to ".{6,}". The regular expression validating passwords. |
-| sessionMaximumLifetime   | Long. Defaults to 86400 (24 hours). The maximum lifetime of session access tokens. In seconds. |
-| linkedinId               | String. Optional. The linkedin oauth account id. |
-| linkedinSecret           | String. Optional. The linkedin oauth account secret. |
-| useLinkedinExpiresIn     | Boolean. Defaults to true. Wether to use token lifetime provided by linkedin when using linkedin oauth authentication. |
-| linkedinRedirectUri      | String. Optional. The URI linkedin redirects to after linkedin oauth handcheck. |
-| linkedinFinalRedirectUri | String. Optional. The URI linkedin finaly redirects to after linkedin oauth handcheck. |
-| maximumInvalidChallenges | Integer. Defaults to 0. The number of invalid password challenges before credentials are automatically disabled. Set this to 0 to disable this features.|
-| resetInvalidChallengesAfterMinutes | Integer (in minutes). Defaults to 60. The number of minutes after the last invalid password challenge before this credentials invalid challenge count is reset to 0.|
+| Property                           | Description                              |
+| ---------------------------------- | ---------------------------------------- |
+| disableGuestSignUp                 | Boolean. Default to false. Wether guests are allowed to create credentials |
+| usernameRegex                      | String. Defaults to "[a-zA-Z0-9_%@+\\-\\.]{3,}". The regular expression validating usernames. |
+| passwordRegex                      | String. Defaults to ".{6,}". The regular expression validating passwords. |
+| sessionMaximumLifetime             | Long. Defaults to 86400 (24 hours). The maximum lifetime of session access tokens. In seconds. |
+| linkedinId                         | String. Optional. The linkedin oauth account id. |
+| linkedinSecret                     | String. Optional. The linkedin oauth account secret. |
+| useLinkedinExpiresIn               | Boolean. Defaults to true. Wether to use token lifetime provided by linkedin when using linkedin oauth authentication. |
+| linkedinRedirectUri                | String. Optional. The URI linkedin redirects to after linkedin oauth handcheck. |
+| linkedinFinalRedirectUri           | String. Optional. The URI linkedin finaly redirects to after linkedin oauth handcheck. |
+| maximumInvalidChallenges           | Integer. Defaults to 0. The number of invalid password challenges before credentials are automatically disabled. Set this to 0 to disable this features. |
+| resetInvalidChallengesAfterMinutes | Integer (in minutes). Defaults to 60. The number of minutes after the last invalid password challenge before this credentials invalid challenge count is reset to 0. |
 
 
 ##### /1/credentials
@@ -181,19 +181,18 @@ Request payload exemple :
 | passwordResetCode | The code received when the credentials password has been deleted and allowing you to set a new password. |
 | password          | The user's new password.                 |
 
-*PUT* resets the password of the specified credentials with a new password. Only authorized to the user of the specified credentials.
+*PUT* resets the password of the specified credentials with a new password. Only authorized to the user of the specified credentials. The new password is passed in the payload as a JSON string. Example of payload :
 
-
-| Parameters | Description                              |
-| ---------- | ---------------------------------------- |
-| password   | String. Required. The user's new password. |
+```json
+"mynewpassword"
+```
 
 
 ##### /1/credentials/{id}/enabled
 
 *PUT* enables/disables the specified credentials. Only authorized to administrators.
 
-The request payload must be a boolean and decides if the specified credentials are enabled or disabled. Example:
+The request payload must be a JSON boolean and decides if the specified credentials are enabled or disabled. Example of payload :
 
 ```json
 true
