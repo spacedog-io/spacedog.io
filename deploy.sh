@@ -1,12 +1,7 @@
 #!/bin/bash
 
-# check prefix argument
-if [ -z "$1" ]
-  then
-    echo "Error: no S3 prefix supplied"
-    echo "Usage: deploy <prefix>"
-    exit -1
-fi
-
 # sync to bucket
-aws s3 sync ./target s3://spacedog.io/$1 --exclude ".*" --exclude "**/.*" --storage-class REDUCED_REDUNDANCY --delete
+aws s3 sync ./target s3://spacedog.io/0 --exclude ".*" --exclude "**/.*" --storage-class REDUCED_REDUNDANCY --delete
+
+# update cloudfront origin prefix
+aws cloudfront create-invalidation --distribution-id E3F1JQPG43OO6J --paths /\*
