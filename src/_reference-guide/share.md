@@ -6,7 +6,7 @@ rank: 5
 
 #### /1/share
 
-The share endpoint provides a way to share files with other users.
+The share endpoint provides a way to share files with other users. Endpoint ACL are managed via `share` settings.
 
 ##### {backendId}.spacedog.io/1/share
 
@@ -16,13 +16,17 @@ The share endpoint provides a way to share files with other users.
 
 ##### {backendId}.spacedog.io/1/share/{filename}
 
-`PUT` uploads a file for sharing. Only authorized to users.
+`PUT` uploads a file for sharing. Users are authorized depending on ACL settings.
 
-Parameters | Description
--------|------------
-filename | The file name. Used to derive the share identifier and the content type. Also used to provide a name when downloading the file from a web browser.
-Content-type | Optional. Header defining the type of file. If this header is not set, the file name extension if present is used to derive the content type. Defaults to `application/octet-stream`.
-body | The file byte array.
+If file size is over 10 MB or `delay` is true, returns an `uploadTo` location for direct upload to S3. In this case, the client code is responsible for upload via PUT of the file on this location with the right `Content-Length` header.
+
+Parameters | Param type | Description
+-----------|------------|------------
+`filename` | Route | String. Required. The file name. Used to derive the share identifier and the content type. Also used to provide a name when downloading the file from a web browser.
+`delay` | Query | Boolean. Defaults to `false`. If true, force a response containing an `uploadTo` location to directly upload file to S3.
+`Content-Length` | Header | Long. Required. The file size in bytes.
+`Content-Type` | Header | String. Defaults to `application/octet-stream`. The format of file. If not set, the file name extension if present is used to derive the content type. 
+Body | Payload | The file byte array.
 
 ##### {backendId}.spacedog.io/1/share/{id}/{filename}
 
