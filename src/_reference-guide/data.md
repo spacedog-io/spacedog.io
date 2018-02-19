@@ -43,6 +43,7 @@ rank: 2
 | Parameters | Description                              |
 | ---------- | ---------------------------------------- |
 | id         | String. Optional. If set, forces SpaceDog to assign the specified `id` to the specified object unless the schema says otherwise with the `_id` directive. Otherwise SpaceDog assigns a generated id to this object. |
+| saveCustomMeta | Boolean. Default to `false`. If true, save `meta` field provided in body along with the rest of the data. The `meta` field should contain a sub object with the following sub fields: `createdAt`, `createdBy`, `updatedAt`, `updatedBy` |
 | body       | String. Required. The JSON repredentation of the data object. Must comply to the type schema. |
 
 ##### {backendId}.spacedog.io/1/data/{type}/{id}
